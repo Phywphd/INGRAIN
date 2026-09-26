@@ -10,7 +10,6 @@ Zhiyi Shi<sup>2</sup>, Yuhao Qiu<sup>1</sup>, Edmond Qi Wu<sup>1,\*</sup>
 &nbsp;·&nbsp; <sup>\*</sup> Corresponding author
 
 [![Project Page](https://img.shields.io/badge/Project_Page-INGRAIN-2563eb?style=for-the-badge)](https://phywphd.github.io/INGRAIN/)
-[![Try it](https://img.shields.io/badge/Try_it-Interactive_Demo-16a34a?style=for-the-badge)](https://phywphd.github.io/INGRAIN/#try-it)
 
 </div>
 
