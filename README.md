@@ -13,6 +13,9 @@ framework built on Grounding DINO. INGRAIN performs object discovery,
 open-vocabulary classification, and trajectory modeling within the native
 vision–language query space.
 
+**Interactive demo:** <https://phywphd.github.io/INGRAIN/demo/> — pick a clip
+and compose the categories to track, right in the browser.
+
 ## Overview
 
 ![INGRAIN pipeline](assets/architecture.png)
@@ -129,12 +132,13 @@ memory aggregation, propagation input) are in the paper.
 
 ## Try it
 
-**Interactive demo.** [`demo/index.html`](demo/index.html) is a single
-self-contained page (about 22 MB) with the *Mowing the lawn* and *Pony walk*
-clips and their pre-computed tracks embedded; no environment, GPU, or weights
-needed. GitHub does not render HTML pages, so download the file (*Download raw
-file*) and open it in a browser. Since the clips are embedded, the page takes a
-moment to load before the clip buttons appear. Pick a clip, open the
+**Interactive demo.** Open it online at
+**<https://phywphd.github.io/INGRAIN/demo/>**. The page,
+[`demo/index.html`](demo/index.html), is a single self-contained file (about
+22 MB) with the *Mowing the lawn* and *Pony walk* clips and their pre-computed
+tracks embedded; no environment, GPU, or weights needed, and it also works
+offline once downloaded. Since the clips are embedded, the page takes a moment
+to load before the clip buttons appear. Pick a clip, open the
 **Prompt** menu, compose any combination of the preset category words, and hit
 **Confirm** — the clip plays from the start with INGRAIN's tracks for exactly
 those words. The tracks were pre-computed by INGRAIN with the demo word list as
