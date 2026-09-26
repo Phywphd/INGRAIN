@@ -76,6 +76,11 @@ p{margin:0 0 14px}
 .demo .loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
       color:#8b8d96;font-size:15px;background:rgba(0,0,0,.35)}
 .demo .loading[hidden]{display:none}
+.demo .hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:3;max-width:calc(100% - 24px);
+      padding:8px 16px;border-radius:999px;border:1px solid #3a3f4d;background:rgba(14,15,18,.82);color:#e8e8ea;
+      font:inherit;font-size:14px;line-height:1.35;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.45)}
+.demo .hint b{color:#4a9eff}
+.demo .hint[hidden]{display:none}
 .demo .bar{display:flex;align-items:center;gap:14px;margin-top:12px;color:#8b8d96;font-size:13px}
 .demo input[type=range]{flex:1;accent-color:#4a9eff}
 .demo .prompt{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;color:#8b8d96;
@@ -168,6 +173,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 40px;text
       <video id="vid" playsinline muted loop preload="auto"></video>
       <canvas id="cv"></canvas>
       <div class="loading" id="loading">Loading clip&hellip;</div>
+      <button class="hint" id="hint" type="button">Open <b>Prompt &#9662;</b> and choose the categories to track</button>
     </div>
     <div class="bar">
       <button class="pp" id="pp">Pause</button>
@@ -263,6 +269,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 40px;text
   const pmenu = document.getElementById('pmenu'), pr = document.getElementById('pr');
   const pp = document.getElementById('pp'), seek = document.getElementById('seek');
   const tc = document.getElementById('tc'), loading = document.getElementById('loading');
+  const hint = document.getElementById('hint');
 
   let DATA = [], PAL = [];
   try {
@@ -310,6 +317,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 40px;text
     pr.innerHTML = (sc && on.size)
       ? '<b>Prompt:</b> ' + sc.words.filter((_, i) => on.has(i)).join(' . ')
       : '<b>Prompt:</b> (none selected)';
+    hint.hidden = !!(sc && on.size);
   }
 
   function play() {
@@ -347,8 +355,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 40px;text
 
   function pick(k) {
     sc = DATA.find(d => d.key === k);
-    sel = new Set(sc.words.map((_, i) => i));   // start with the clip's full word list
-    on = new Set(sel);
+    sel = new Set(); on = new Set();   // clean start: no category is tracked until the viewer confirms a prompt
     buildMenu(); pmenu.hidden = true; pbtn.disabled = false;
     loading.hidden = false;
     vid.src = 'static/demo/' + sc.key + '.mp4';
@@ -363,6 +370,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 40px;text
   vid.addEventListener('waiting', () => { loading.hidden = false; });
 
   pbtn.onclick = e => { e.stopPropagation(); if (!pmenu.hidden) { pmenu.hidden = true; return; } sel = new Set(on); syncChecks(); pmenu.hidden = false; };
+  hint.onclick = e => { e.stopPropagation(); if (!sc) return; sel = new Set(on); syncChecks(); pmenu.hidden = false; };
   pmenu.onclick = e => e.stopPropagation();
   document.addEventListener('click', () => { pmenu.hidden = true; });
   pp.onclick = () => {
