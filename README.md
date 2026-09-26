@@ -59,21 +59,21 @@ absent from the training annotations. Click a preview to open the full-length
 <table>
   <tr>
     <td align="center" width="50%">
-      <a href="assets/videos/mower.mp4"><img src="assets/demo/mower.webp" width="100%" alt="Mowing the lawn"></a>
+      <a href="https://phywphd.github.io/INGRAIN/static/videos/mower.mp4"><img src="assets/demo/mower.webp" width="100%" alt="Mowing the lawn"></a>
       <br><sub>Mowing the lawn</sub>
     </td>
     <td align="center" width="50%">
-      <a href="assets/videos/horse.mp4"><img src="assets/demo/horse.webp" width="100%" alt="Pony walk"></a>
+      <a href="https://phywphd.github.io/INGRAIN/static/videos/horse.mp4"><img src="assets/demo/horse.webp" width="100%" alt="Pony walk"></a>
       <br><sub>Pony walk</sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <a href="assets/videos/elephant.mp4"><img src="assets/demo/elephant.webp" width="100%" alt="Elephants"></a>
+      <a href="https://phywphd.github.io/INGRAIN/static/videos/elephant.mp4"><img src="assets/demo/elephant.webp" width="100%" alt="Elephants"></a>
       <br><sub>Elephants</sub>
     </td>
     <td align="center" width="50%">
-      <a href="assets/videos/monkey.mp4"><img src="assets/demo/monkey.webp" width="100%" alt="Monkey and goat"></a>
+      <a href="https://phywphd.github.io/INGRAIN/static/videos/monkey.mp4"><img src="assets/demo/monkey.webp" width="100%" alt="Monkey and goat"></a>
       <br><sub>Monkey and goat</sub>
     </td>
   </tr>
@@ -138,10 +138,10 @@ memory aggregation, propagation input) are in the paper.
 <a href="https://phywphd.github.io/INGRAIN/#try-it"><img src="assets/try_it.jpg" width="100%" alt="Interactive demo on the INGRAIN project page"></a>
 
 **Interactive demo** on the [project page](https://phywphd.github.io/INGRAIN/#try-it)
-— click the image above. The demo opens already playing; pick a clip, open the
-**Prompt** menu, compose any combination of the preset category words, and hit
-**Confirm** — the clip plays from the start with INGRAIN's tracks for exactly
-those words. The tracks were pre-computed by INGRAIN with the demo word list as
+— click the image above. The demo opens with no category selected; pick a
+clip, open the **Prompt** menu, compose any combination of the preset category
+words, and hit **Confirm** — the clip plays from the start with INGRAIN's tracks
+for exactly those words. The tracks were pre-computed by INGRAIN with the demo word list as
 its prompt; the page only replays them, so no environment, GPU, or weights are
 needed. For offline use, [`demo/index.html`](demo/index.html) is the same demo
 as a single self-contained file (about 22 MB): download it and open it in a
@@ -297,9 +297,10 @@ scripts/
 
 demo/                        interactive demo as a single offline HTML file
 docs/                        project page (GitHub Pages): interactive demo,
-                             videos, results
-assets/                      architecture figure, demo previews and videos,
-                             augmentation examples (README)
+                             demo videos
+assets/                      README figures: architecture, demo previews and
+                             screenshot, full-length demo videos,
+                             augmentation examples
 teta/                        vendored TETA scorer
 third_party/
   mmgroundingdino/           vendored Grounding DINO stack
