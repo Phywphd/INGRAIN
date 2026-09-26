@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Model weights & checkpoints (too large for git)
+weights/
+ckpt/
+*.pth
+
+# Large external data (see the Data section of README.md)
+data/frames
+data/*.json
+data/*.h5
+
+# Run outputs (keep the *.txt video lists at eval/results/ root)
+outputs/
+eval/results/*/
+logs/
+*_tracked.mp4
