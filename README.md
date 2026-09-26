@@ -1,3 +1,5 @@
+<div align="center">
+
 # Unlocking the Ingrained Tracker in Grounding DINO for Open-Vocabulary Multi-Object Tracking
 
 Haoyu Pan<sup>1</sup>, Jinxi Liu<sup>1</sup>, Shuo Zhang<sup>1</sup>,
@@ -7,14 +9,17 @@ Zhiyi Shi<sup>2</sup>, Yuhao Qiu<sup>1</sup>, Edmond Qi Wu<sup>1,\*</sup>
 <sup>2</sup> School of Automation and Intelligent Sensing, Shanghai Jiao Tong University
 &nbsp;·&nbsp; <sup>\*</sup> Corresponding author
 
+[![Project Page](https://img.shields.io/badge/Project_Page-INGRAIN-2563eb?style=for-the-badge)](https://phywphd.github.io/INGRAIN/)
+[![Try it](https://img.shields.io/badge/Try_it-Interactive_Demo-16a34a?style=for-the-badge)](https://phywphd.github.io/INGRAIN/#try-it)
+![Paper](https://img.shields.io/badge/Paper-Coming_Soon-9ca3af?style=for-the-badge)
+
+</div>
+
 **INGRAIN** (*Tracking with **IN**herited **GR**ounding **A**lignment **IN**
 the Native Vision–Language Query Space*) is an end-to-end tracking-by-query
 framework built on Grounding DINO. INGRAIN performs object discovery,
 open-vocabulary classification, and trajectory modeling within the native
 vision–language query space.
-
-**Interactive demo:** <https://phywphd.github.io/INGRAIN/demo/> — pick a clip
-and compose the categories to track, right in the browser.
 
 ## Overview
 
@@ -132,17 +137,17 @@ memory aggregation, propagation input) are in the paper.
 
 ## Try it
 
-**Interactive demo.** Open it online at
-**<https://phywphd.github.io/INGRAIN/demo/>**. The page,
-[`demo/index.html`](demo/index.html), is a single self-contained file (about
-22 MB) with the *Mowing the lawn* and *Pony walk* clips and their pre-computed
-tracks embedded; no environment, GPU, or weights needed, and it also works
-offline once downloaded. Since the clips are embedded, the page takes a moment
-to load before the clip buttons appear. Pick a clip, open the
+<a href="https://phywphd.github.io/INGRAIN/#try-it"><img src="assets/try_it.jpg" width="100%" alt="Interactive demo on the INGRAIN project page"></a>
+
+**Interactive demo** on the [project page](https://phywphd.github.io/INGRAIN/#try-it)
+— click the image above. The demo opens already playing; pick a clip, open the
 **Prompt** menu, compose any combination of the preset category words, and hit
 **Confirm** — the clip plays from the start with INGRAIN's tracks for exactly
 those words. The tracks were pre-computed by INGRAIN with the demo word list as
-its prompt; the page only replays them.
+its prompt; the page only replays them, so no environment, GPU, or weights are
+needed. For offline use, [`demo/index.html`](demo/index.html) is the same demo
+as a single self-contained file (about 22 MB): download it and open it in a
+browser.
 
 | Clip | Demo word list |
 |---|---|
@@ -292,7 +297,9 @@ scripts/
   eval_test_full.sh          full TAO test, resumable
   score_partial_snapshot.py  score a mid-run snapshot
 
-demo/                        interactive open-vocabulary tracking demo
+demo/                        interactive demo as a single offline HTML file
+docs/                        project page (GitHub Pages): interactive demo,
+                             videos, results
 assets/                      architecture figure, demo previews and videos,
                              augmentation examples (README)
 teta/                        vendored TETA scorer

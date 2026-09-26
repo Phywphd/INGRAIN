@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INGRAIN: Unlocking the Ingrained Tracker in Grounding DINO for Open-Vocabulary Multi-Object Tracking</title>
+<meta name="description" content="INGRAIN is an end-to-end open-vocabulary multi-object tracker built on Grounding DINO. Try the interactive demo in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="INGRAIN: Unlocking the Ingrained Tracker in Grounding DINO for Open-Vocabulary Multi-Object Tracking">
+<meta property="og:description" content="End-to-end open-vocabulary multi-object tracking within the native vision–language query space of Grounding DINO. Interactive demo, code, and results.">
+<meta property="og:url" content="https://phywphd.github.io/INGRAIN/">
+<meta property="og:image" content="https://phywphd.github.io/INGRAIN/static/images/architecture.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e0f12'/%3E%3Crect x='6.5' y='8.5' width='12' height='15' rx='1.5' fill='none' stroke='%234a9eff' stroke-width='2.4'/%3E%3Crect x='14.5' y='5.5' width='11' height='12' rx='1.5' fill='none' stroke='%233fb984' stroke-width='2.4'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#ffffff; --fg:#1f2328; --muted:#59636e; --line:#e3e6ea; --soft:#f6f8fa;
+  --accent:#2563eb; --btn:#1f2328; --btn-fg:#ffffff; --ours:#eef4ff;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --line:#2a313c; --soft:#151b23;
+    --accent:#6ea8fe; --btn:#e6edf3; --btn-fg:#0d1117; --ours:#16243b;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);
+     font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+     -webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1000px;margin:0 auto;padding:0 20px}
+section{padding:34px 0 10px}
+h2{font-size:26px;line-height:1.3;margin:0 0 18px;text-align:center;letter-spacing:-.01em}
+p{margin:0 0 14px}
+
+/* ---------- hero ---------- */
+.hero{text-align:center;padding:56px 0 18px}
+.hero h1{font-size:36px;line-height:1.22;margin:0 auto 20px;max-width:900px;letter-spacing:-.02em;font-weight:700;text-wrap:balance}
+.hero h1 .name{color:var(--accent)}
+.authors{font-size:18px;margin-bottom:6px;display:flex;flex-wrap:wrap;justify-content:center;gap:2px 16px}
+.authors span{white-space:nowrap}
+.affils{color:var(--muted);font-size:15px;line-height:1.5}
+.affils span{display:inline-block;margin:0 9px}
+.buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:24px 0 6px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:999px;
+     background:var(--btn);color:var(--btn-fg);font-weight:600;font-size:15px;line-height:1;border:1px solid var(--btn)}
+.btn:hover{text-decoration:none;opacity:.88}
+.btn svg{width:17px;height:17px;fill:currentColor;flex:none}
+.btn.soon{background:transparent;color:var(--muted);border-color:var(--line);cursor:default}
+.btn.soon:hover{opacity:1}
+.btn small{font-weight:500;font-size:12px}
+
+/* ---------- interactive demo ---------- */
+.lead{text-align:center;color:var(--muted);max-width:720px;margin:0 auto 20px}
+.demo{background:#0e0f12;color:#e8e8ea;border-radius:16px;padding:18px 18px 16px;
+      box-shadow:0 12px 36px rgba(15,23,42,.22);color-scheme:dark}
+.demo .row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+.demo .tab,.demo .pbtn,.demo .pp{padding:7px 15px;border-radius:8px;border:1px solid #2a2c33;background:#16171c;
+      color:#b9bbc4;cursor:pointer;font:inherit;font-size:14px;line-height:1.3}
+.demo .tab[aria-selected=true]{background:#232630;color:#fff;border-color:#3a3f4d}
+.demo .spacer{flex:1}
+.demo .pwrap{position:relative}
+.demo .pbtn{color:#e8e8ea;border-color:#3a3f4d}
+.demo .pmenu{position:absolute;top:calc(100% + 6px);right:0;z-index:6;min-width:250px;
+      background:#16171c;border:1px solid #2a2c33;border-radius:10px;padding:10px;
+      display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.demo .pmenu[hidden]{display:none}
+.demo .pmenu .quick{display:flex;gap:6px;margin-bottom:4px}
+.demo .pmenu .quick button{flex:1;padding:4px 0;border-radius:6px;border:1px solid #2a2c33;background:#1d1f25;
+      color:#b9bbc4;cursor:pointer;font:inherit;font-size:13px}
+.demo .pmenu label{display:flex;align-items:center;gap:9px;font-size:14px;color:#c9cbd3;cursor:pointer;user-select:none}
+.demo .pmenu .ok{margin-top:6px;padding:7px 0;border-radius:8px;border:0;background:#4a9eff;color:#0e0f12;
+      font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.demo .stage{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}
+.demo video,.demo canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.demo canvas{pointer-events:none}
+.demo .loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      color:#8b8d96;font-size:15px;background:rgba(0,0,0,.35)}
+.demo .loading[hidden]{display:none}
+.demo .bar{display:flex;align-items:center;gap:14px;margin-top:12px;color:#8b8d96;font-size:13px}
+.demo input[type=range]{flex:1;accent-color:#4a9eff}
+.demo .prompt{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;color:#8b8d96;
+      margin-top:10px;word-break:break-word;min-height:1.5em}
+.demo .prompt b{color:#c9cbd3;font-weight:600}
+.note{font-size:14px;color:var(--muted);text-align:center;margin-top:12px}
+
+/* ---------- content ---------- */
+.abstract p{text-align:justify;hyphens:auto}
+@media (max-width:760px){.abstract p,.fig figcaption{text-align:left}}
+figure{margin:0}
+.fig img{width:100%;height:auto;display:block;border-radius:8px;background:#fff}
+.fig figcaption,.caption{font-size:14px;color:var(--muted);margin-top:10px;text-align:justify}
+.components{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--soft)}
+.card h3{margin:0 0 6px;font-size:16px}
+.card p{margin:0;font-size:14.5px;color:var(--muted);line-height:1.55}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.gallery a{display:block;border-radius:10px;overflow:hidden;background:#000;position:relative}
+.gallery img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover}
+.gallery .label{font-size:14px;color:var(--muted);text-align:center;margin-top:6px}
+.tablewrap{overflow-x:auto;margin:0 0 8px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 7px;text-align:center;white-space:nowrap}
+th{font-weight:600;background:var(--soft)}
+thead tr:first-child th{border-bottom:1px solid var(--line)}
+tbody tr{border-top:1px solid var(--line)}
+td:first-child,th:first-child{text-align:left}
+tr.ours td{background:var(--ours);font-weight:700}
+td.sep,th.sep{border-left:1px solid var(--line)}
+.tnote{font-size:13px;color:var(--muted);margin:6px 2px 22px}
+h3.tt{font-size:17px;margin:18px 0 10px}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 40px;text-align:center;color:var(--muted);font-size:14px}
+
+@media (max-width:760px){
+  .hero{padding-top:34px}
+  .hero h1{font-size:25px}
+  .authors{font-size:16px}
+  .components{grid-template-columns:1fr}
+  .gallery{grid-template-columns:1fr}
+  .demo{padding:12px;border-radius:12px}
+  .demo .pmenu{right:auto;left:0}
+  h2{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<header class="hero container">
+  <h1><span class="name">INGRAIN</span>: Unlocking the Ingrained Tracker in Grounding DINO for Open-Vocabulary Multi-Object Tracking</h1>
+  <div class="authors">
+    <span>Haoyu Pan<sup>1</sup></span><span>Jinxi Liu<sup>1</sup></span><span>Shuo Zhang<sup>1</sup></span><span>Zhiyi Shi<sup>2</sup></span><span>Yuhao Qiu<sup>1</sup></span><span>Edmond Qi Wu<sup>1,*</sup></span>
+  </div>
+  <div class="affils">
+    <span><sup>1</sup>School of Computer Science, Shanghai Jiao Tong University</span>
+    <span><sup>2</sup>School of Automation and Intelligent Sensing, Shanghai Jiao Tong University</span>
+    <span><sup>*</sup>Corresponding author</span>
+  </div>
+  <div class="buttons">
+    <span class="btn soon" title="The paper link will be added soon">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm7 1.5V9h5.5L13 3.5zM7 13h10v1.6H7V13zm0 3.4h10V18H7v-1.6z"/></svg>
+      Paper <small>(coming soon)</small>
+    </span>
+    <a class="btn" href="https://github.com/Phywphd/INGRAIN">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      Code
+    </a>
+    <a class="btn" href="#try-it">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z"/></svg>
+      Try it
+    </a>
+    <a class="btn" href="#videos">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 2v2h2V6H4zm14 0v2h2V6h-2zM4 10v4h2v-4H4zm14 0v4h2v-4h-2zM4 16v2h2v-2H4zm14 0v2h2v-2h-2zM8 6v12h8V6H8z"/></svg>
+      Videos
+    </a>
+  </div>
+</header>
+
+<main class="container">
+
+<section id="try-it">
+  <h2>Try it</h2>
+  <p class="lead">INGRAIN tracks whatever category words it is given — including categories absent from the training annotations. Pick a clip, open <b>Prompt</b>, and compose the categories to track.</p>
+  <div class="demo">
+    <div class="row">
+      <div id="tabs" class="row" style="margin:0"></div>
+      <span class="spacer"></span>
+      <div class="pwrap">
+        <button class="pbtn" id="pbtn" disabled>Prompt &#9662;</button>
+        <div class="pmenu" id="pmenu" hidden></div>
+      </div>
+    </div>
+    <div class="stage">
+      <video id="vid" playsinline muted loop preload="auto"></video>
+      <canvas id="cv"></canvas>
+      <div class="loading" id="loading">Loading clip&hellip;</div>
+    </div>
+    <div class="bar">
+      <button class="pp" id="pp">Pause</button>
+      <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek">
+      <span id="tc">0:00</span>
+    </div>
+    <div class="prompt" id="pr">&nbsp;</div>
+  </div>
+  <p class="note">The tracks were pre-computed by INGRAIN with each clip's full word list as its prompt; the page replays them for the words you select.</p>
+</section>
+
+<section id="abstract" class="abstract">
+  <h2>Abstract</h2>
+  <p>Open-vocabulary multi-object tracking (OV-MOT) aims to localize, recognize, and consistently associate objects beyond a fixed training vocabulary. However, current OV-MOT methods often use pretrained open-vocabulary detectors mainly for frame-level perception, or derive their open-vocabulary correspondence from an external model during tracking, leaving the alignment already acquired in detector pretraining underexploited for trajectory modeling. To address this limitation, we propose INGRAIN, an end-to-end framework that directly integrates object discovery, open-vocabulary classification, and trajectory modeling within the vision–language query space inherited from a pretrained Grounding DINO. Specifically, a staged dual-path decoder first separates open-vocabulary object discovery from trajectory modeling, and then integrates them for joint reasoning. Multi-depth trajectory memory provides long-range historical context throughout track decoding and cross-frame propagation, and observation-guided propagation reconstructs each track query with localized instance evidence from the current observation. Extensive experiments show that INGRAIN establishes a new state of the art for end-to-end OV-MOT on TAO, delivering strong association together with high novel-category classification accuracy.</p>
+</section>
+
+<section id="method">
+  <h2>Method</h2>
+  <figure class="fig">
+    <img src="static/images/architecture.png" alt="Overall pipeline of INGRAIN" loading="lazy">
+    <figcaption>Overall pipeline of INGRAIN. Detect queries initialized in the native vision–language query space and propagated track queries are processed by a staged dual-path decoder. Multi-depth trajectory memory interacts with the corresponding decoder layers, and observation-guided propagation reconstructs, updates, and continues track queries across observations.</figcaption>
+  </figure>
+  <div class="components">
+    <div class="card"><h3>Staged dual-path decoder</h3><p>Provides distinct early updates for detect and track queries, followed by joint refinement.</p></div>
+    <div class="card"><h3>Multi-depth trajectory memory</h3><p>Supplies layer-aligned historical representations to reduce drift in propagated track queries.</p></div>
+    <div class="card"><h3>Observation-guided propagation</h3><p>Reconstructs track queries from instance observations and decoded trajectory representations for the next frame.</p></div>
+  </div>
+</section>
+
+<section id="videos">
+  <h2>Demo Videos</h2>
+  <div class="gallery">
+    <div><a href="static/videos/mower.mp4" target="_blank" rel="noopener"><img data-src="static/previews/mower.webp" alt="Mowing the lawn" loading="lazy"></a><div class="label">Mowing the lawn</div></div>
+    <div><a href="static/videos/horse.mp4" target="_blank" rel="noopener"><img data-src="static/previews/horse.webp" alt="Pony walk" loading="lazy"></a><div class="label">Pony walk</div></div>
+    <div><a href="static/videos/elephant.mp4" target="_blank" rel="noopener"><img data-src="static/previews/elephant.webp" alt="Elephants" loading="lazy"></a><div class="label">Elephants</div></div>
+    <div><a href="static/videos/monkey.mp4" target="_blank" rel="noopener"><img data-src="static/previews/monkey.webp" alt="Monkey and goat" loading="lazy"></a><div class="label">Monkey and goat</div></div>
+  </div>
+  <p class="note">Click a preview to open the full-length 1280×720 video.</p>
+</section>
+
+<section id="results">
+  <h2>Results</h2>
+  <h3 class="tt">Open-vocabulary MOT on TAO</h3>
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th></th><th class="sep" colspan="4">Validation, Novel</th><th class="sep" colspan="4">Validation, Base</th><th class="sep" colspan="4">Test, Novel</th><th class="sep" colspan="4">Test, Base</th></tr>
+        <tr><th>Method</th>
+          <th class="sep">TETA</th><th>LocA</th><th>AssocA</th><th>ClsA</th>
+          <th class="sep">TETA</th><th>LocA</th><th>AssocA</th><th>ClsA</th>
+          <th class="sep">TETA</th><th>LocA</th><th>AssocA</th><th>ClsA</th>
+          <th class="sep">TETA</th><th>LocA</th><th>AssocA</th><th>ClsA</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>DeepSORT (ViLD)<sup>†</sup></td><td class="sep">21.1</td><td>46.4</td><td>14.7</td><td>2.3</td><td class="sep">26.9</td><td>47.1</td><td>15.8</td><td>17.7</td><td class="sep">17.2</td><td>38.4</td><td>11.6</td><td>1.7</td><td class="sep">24.5</td><td>43.8</td><td>14.6</td><td>15.2</td></tr>
+        <tr><td>TETer<sup>†*</sup></td><td class="sep">25.7</td><td>45.9</td><td>31.1</td><td>0.2</td><td class="sep">30.3</td><td>47.4</td><td>31.6</td><td>12.1</td><td class="sep">21.7</td><td>39.1</td><td>25.9</td><td>0.0</td><td class="sep">29.2</td><td>44.0</td><td>30.4</td><td>10.7</td></tr>
+        <tr><td>OVTrack</td><td class="sep">27.8</td><td>48.8</td><td>33.6</td><td>1.5</td><td class="sep">35.5</td><td>49.3</td><td>36.9</td><td>20.2</td><td class="sep">24.1</td><td>41.8</td><td>28.7</td><td>1.8</td><td class="sep">32.6</td><td>45.6</td><td>35.4</td><td>16.9</td></tr>
+        <tr><td>OVTR</td><td class="sep">31.4</td><td>54.4</td><td>34.5</td><td>5.4</td><td class="sep">36.6</td><td>52.2</td><td>37.6</td><td>20.1</td><td class="sep">27.1</td><td>47.1</td><td>32.1</td><td>2.1</td><td class="sep">34.5</td><td>51.1</td><td>37.5</td><td>14.9</td></tr>
+        <tr><td>SLAck</td><td class="sep">31.1</td><td>54.3</td><td>37.8</td><td>1.3</td><td class="sep">37.2</td><td>55.0</td><td>37.6</td><td>19.1</td><td class="sep">27.1</td><td>49.1</td><td>30.0</td><td>2.0</td><td class="sep">34.7</td><td>52.5</td><td>35.6</td><td>16.1</td></tr>
+        <tr class="ours"><td>INGRAIN (ours)</td><td class="sep">38.9</td><td>61.1</td><td>38.9</td><td>16.6</td><td class="sep">41.1</td><td>61.5</td><td>39.2</td><td>22.6</td><td class="sep">37.5</td><td>59.5</td><td>37.4</td><td>15.7</td><td class="sep">38.7</td><td>60.5</td><td>38.4</td><td>17.1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tnote">Novel and Base are the rare and frequent/common LVIS category splits. †: also trained on TAO; *: trained on base and novel categories.</p>
+
+  <h3 class="tt">Closed-set results on TAO val</h3>
+  <div class="tablewrap" style="max-width:560px">
+    <table>
+      <thead><tr><th>Method</th><th>TETA</th><th>LocA</th><th>AssocA</th><th>ClsA</th></tr></thead>
+      <tbody>
+        <tr><td>ByteTrack (GD-T)</td><td>31.0</td><td>47.4</td><td>26.4</td><td>19.1</td></tr>
+        <tr><td>MASA (GD-B)</td><td>34.9</td><td>51.8</td><td>37.6</td><td>15.4</td></tr>
+        <tr><td>OVTR</td><td>35.7</td><td>52.3</td><td>36.3</td><td>18.4</td></tr>
+        <tr><td>SLAck-T</td><td>35.5</td><td>52.2</td><td>38.9</td><td>15.6</td></tr>
+        <tr class="ours"><td>INGRAIN (ours)</td><td>40.9</td><td>61.5</td><td>39.2</td><td>21.9</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tnote">GD-T/GD-B: Grounding DINO with Swin-T/Swin-B; SLAck-T: SLAck with Swin-T.</p>
+</section>
+
+</main>
+
+<footer class="container">
+  INGRAIN · Shanghai Jiao Tong University · <a href="https://github.com/Phywphd/INGRAIN">Code on GitHub</a>
+</footer>
+
+<script>
+(async function () {
+  const vid = document.getElementById('vid'), cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const tabs = document.getElementById('tabs'), pbtn = document.getElementById('pbtn');
+  const pmenu = document.getElementById('pmenu'), pr = document.getElementById('pr');
+  const pp = document.getElementById('pp'), seek = document.getElementById('seek');
+  const tc = document.getElementById('tc'), loading = document.getElementById('loading');
+
+  let DATA = [], PAL = [];
+  try {
+    const j = await (await fetch('static/demo/tracks.json')).json();
+    DATA = j.clips; PAL = j.palette;
+  } catch (e) {
+    loading.textContent = 'Could not load the demo data.';
+    return;
+  }
+
+  let sc = null;           // selected clip
+  let on = new Set();      // confirmed word indices (drawn)
+  let sel = new Set();     // pending selection inside the prompt menu
+  let userPaused = false;  // pause pressed by the viewer (not by scrolling away)
+
+  function paint() {
+    if (sc) {
+      if (cv.width !== sc.w) { cv.width = sc.w; cv.height = sc.h; }
+      ctx.clearRect(0, 0, sc.w, sc.h);
+      let i = Math.round(vid.currentTime * sc.fps);
+      if (!(i >= 0)) i = 0;
+      if (i >= sc.n) i = sc.n - 1;
+      ctx.lineWidth = 3; ctx.font = '600 15px ui-sans-serif,system-ui,sans-serif';
+      ctx.textBaseline = 'top';
+      for (const [tid, x, y, w, h] of sc.f[i]) {
+        const wi = sc.tid[tid];
+        if (wi < 0 || !on.has(wi)) continue;
+        const col = PAL[tid % PAL.length];
+        ctx.strokeStyle = col; ctx.strokeRect(x, y, w, h);
+        const label = sc.words[wi];
+        const tw = ctx.measureText(label).width;
+        const ly = y - 21 < 0 ? y + 2 : y - 21;
+        ctx.fillStyle = col; ctx.fillRect(x, ly, tw + 12, 21);
+        ctx.fillStyle = '#000'; ctx.fillText(label, x + 6, ly + 3);
+      }
+      const d = vid.duration || 1;
+      seek.value = Math.round(vid.currentTime / d * 1000);
+      const t = vid.currentTime | 0;
+      tc.textContent = (t / 60 | 0) + ':' + String(t % 60).padStart(2, '0');
+    }
+    requestAnimationFrame(paint);
+  }
+
+  function updatePrompt() {
+    pr.innerHTML = (sc && on.size)
+      ? '<b>Prompt:</b> ' + sc.words.filter((_, i) => on.has(i)).join(' . ')
+      : '<b>Prompt:</b> (none selected)';
+  }
+
+  function play() {
+    const p = vid.play();
+    if (p && p.catch) p.catch(() => { pp.textContent = 'Play'; });
+  }
+
+  function buildMenu() {
+    pmenu.innerHTML = '';
+    const quick = document.createElement('div'); quick.className = 'quick';
+    const mk = (txt, fn) => { const b = document.createElement('button'); b.textContent = txt; b.onclick = fn; quick.appendChild(b); };
+    mk('All', () => { sc.words.forEach((_, i) => sel.add(i)); syncChecks(); });
+    mk('None', () => { sel.clear(); syncChecks(); });
+    pmenu.appendChild(quick);
+    sc.words.forEach((w, i) => {
+      const l = document.createElement('label');
+      const c = document.createElement('input');
+      c.type = 'checkbox'; c.checked = sel.has(i); c.dataset.i = i;
+      c.onchange = () => { c.checked ? sel.add(i) : sel.delete(i); };
+      l.appendChild(c); l.appendChild(document.createTextNode(w));
+      pmenu.appendChild(l);
+    });
+    const ok = document.createElement('button');
+    ok.className = 'ok'; ok.textContent = 'Confirm';
+    ok.onclick = () => {
+      on = new Set(sel); updatePrompt(); pmenu.hidden = true;
+      vid.currentTime = 0;             // run from the start with the new prompt
+      userPaused = false; play();
+    };
+    pmenu.appendChild(ok);
+  }
+  function syncChecks() {
+    pmenu.querySelectorAll('input[type=checkbox]').forEach(c => { c.checked = sel.has(+c.dataset.i); });
+  }
+
+  function pick(k) {
+    sc = DATA.find(d => d.key === k);
+    sel = new Set(sc.words.map((_, i) => i));   // start with the clip's full word list
+    on = new Set(sel);
+    buildMenu(); pmenu.hidden = true; pbtn.disabled = false;
+    loading.hidden = false;
+    vid.src = 'static/demo/' + sc.key + '.mp4';
+    userPaused = false; play();
+    [...tabs.children].forEach(t => t.setAttribute('aria-selected', t.dataset.k === k));
+    updatePrompt();
+  }
+
+  vid.addEventListener('playing', () => { loading.hidden = true; pp.textContent = 'Pause'; });
+  vid.addEventListener('canplay', () => { loading.hidden = true; });
+  vid.addEventListener('pause', () => { pp.textContent = 'Play'; });
+  vid.addEventListener('waiting', () => { loading.hidden = false; });
+
+  pbtn.onclick = e => { e.stopPropagation(); if (!pmenu.hidden) { pmenu.hidden = true; return; } sel = new Set(on); syncChecks(); pmenu.hidden = false; };
+  pmenu.onclick = e => e.stopPropagation();
+  document.addEventListener('click', () => { pmenu.hidden = true; });
+  pp.onclick = () => {
+    if (!sc) return;
+    if (vid.paused) { userPaused = false; play(); } else { userPaused = true; vid.pause(); }
+  };
+  seek.oninput = e => { if (vid.duration) vid.currentTime = e.target.value / 1000 * vid.duration; };
+
+  DATA.forEach(d => {
+    const b = document.createElement('button');
+    b.className = 'tab'; b.textContent = d.title; b.dataset.k = d.key;
+    b.onclick = () => pick(d.key);
+    tabs.appendChild(b);
+  });
+
+  // Pause while the demo is scrolled out of view; resume when it comes back.
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => {
+      for (const e of es) {
+        if (!sc) continue;
+        if (e.isIntersecting) { if (vid.paused && !userPaused) play(); }
+        else if (!vid.paused) vid.pause();
+      }
+    }, { threshold: 0.15 }).observe(document.querySelector('.stage'));
+  }
+
+  pick(DATA[0].key);
+  requestAnimationFrame(paint);
+})();
+
+// Gallery previews load only when scrolled near, so the demo clip gets the bandwidth first.
+(function () {
+  const imgs = [...document.querySelectorAll('img[data-src]')];
+  const load = img => { img.src = img.dataset.src; img.removeAttribute('data-src'); };
+  if (!('IntersectionObserver' in window)) { imgs.forEach(load); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { load(e.target); io.unobserve(e.target); }
+  }), { rootMargin: '300px 0px' });
+  imgs.forEach(i => io.observe(i));
+})();
+</script>
+</body>
+</html>
