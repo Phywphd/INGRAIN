@@ -1,0 +1,35 @@
+# Strictly configure according to the required versions.
+# Install PyTorch first, from the CUDA 12.8 (cu128) wheel index — the paper
+# environment is torch 2.10.0+cu128 with torchvision 0.25.0+cu128. Then
+# install the rest with:
+#   pip install "setuptools<81" wheel
+#   pip install --no-build-isolation -r requirements.txt
+# mmcv has no wheel on PyPI; it is compiled from source and its build needs
+# both the pinned setuptools and the already-installed torch.
+
+torch==2.10.0
+torchvision==0.25.0
+
+h5py==3.16.0
+matplotlib==3.10.7
+mmcv==2.2.0
+mmengine==0.10.7
+numpy==1.26.4
+opencv-python==4.8.1.78
+Pillow==11.3.0
+pycocotools==2.0.10
+scipy==1.13.1
+shapely==2.1.2
+six==1.17.0
+terminaltables==3.1.10
+tqdm==4.65.2
+transformers==4.57.6
+
+# PyTorch: torch >= 2.8 built for CUDA 12.8 also works, with the matching
+# torchvision (roi_align and generalized_box_iou are used at runtime).
+#
+# Grounding DINO: DO NOT pip install mmdet. This repository vendors a
+# patched Grounding DINO stack under third_party/mmgroundingdino/,
+# placed first on sys.path at import time.
+#
+# The TETA scorer is vendored under teta/ (no pip install needed).
